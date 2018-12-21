@@ -1,111 +1,84 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path_provider/path_provider.dart';
 
-void main() => runApp(MyApp());
+import 'dart:async';
+import 'dart:io';
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+import 'globals.dart' as G;
+import 'db.dart';
+import 'restart_widget.dart';
+
+Future<Null> androidUpgrade() async {
+  /*
+  String db_path = "/data/data/com.alexey.test/databases/saints.sqlite";
+  File f = File.fromUri(Uri.file(db_path));
+
+  if (await f.exists()) await f.delete();
+
+  final platform = const MethodChannel('com.alexey.test/saints');
+  String downloads = await platform.invokeMethod('getDownloadsDir');
+
+  final dir = Directory(downloads + 'images');
+
+  if (await dir.exists()) await dir.delete(recursive: true);
+  */
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
+Future<Null> iosUpgrade() async {
+  Directory dir = await getApplicationDocumentsDirectory();
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
+  var f = File.fromUri(Uri.file('${dir.path}/saints-icons-300px.zip'));
+  var iconsDir = Directory(dir.path + '/saints-icons-300px');
 
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
+  if (await f.exists()) await f.delete();
+  if (await iconsDir.exists()) await iconsDir.delete(recursive: true);
 
-  final String title;
+  f = File.fromUri(Uri.file('${dir.path}/icons.zip'));
+  iconsDir = Directory(dir.path + '/icons');
 
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
+  if (await f.exists()) await f.delete();
+  if (await iconsDir.exists()) await iconsDir.delete(recursive: true);
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+Future<Null> main() async {
+  G.prefs = await SharedPreferences.getInstance();
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  Directory documentsDirectory = await getApplicationDocumentsDirectory();
+  String path = documentsDirectory.path + "/saints.sqlite";
+
+  if (!G.prefs.getKeys().contains('version_4_5')) {
+    await G.prefs.clear();
+
+    if (Platform.isAndroid)
+      await androidUpgrade();
+    else if (Platform.isIOS) await iosUpgrade();
+
+    await copyDatabase(to: path);
+
+    G.prefs.setBool('version_4_5', true);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+  G.db = await openDatabase(path);
+
+  if (!G.prefs.getKeys().contains('bgcolor')) {
+    G.prefs.setInt('bgcolor', 0);
   }
+
+  if (!G.prefs.getKeys().contains('fontSize')) {
+    G.prefs.setDouble('fontSize', 20.0);
+  }
+
+  if (!G.prefs.getKeys().contains('favs')) {
+    G.prefs.setStringList('favs', []);
+  }
+
+  if (!G.prefs.getKeys().contains('search')) {
+    G.prefs.setString('search', '');
+  }
+
+  runApp(RestartWidget());
 }
+
