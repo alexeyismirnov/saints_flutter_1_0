@@ -1,4 +1,4 @@
-package com.rlc.saintsflutter10;
+package com.alexey.test;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;
