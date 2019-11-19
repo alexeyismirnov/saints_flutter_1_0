@@ -44,6 +44,8 @@ Future<Null> iosUpgrade() async {
 }
 
 Future<Null> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
   G.prefs = await SharedPreferences.getInstance();
 
   Directory documentsDirectory = await getApplicationDocumentsDirectory();

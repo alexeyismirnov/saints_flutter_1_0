@@ -87,11 +87,12 @@ class _SaintDetailPageState extends State<SaintDetailPage> {
                   rootBundle
                       .load('icons/${widget.saint.id}.jpg')
                       .then((ByteData bytes) {
-                    EsysFlutterShare.shareImage(
-                        'saint.jpg', bytes, widget.saint.name, markdown);
+                    Share.file('icon', 'saint.jpg', bytes.buffer.asUint8List(),
+                        'image/jpg',
+                        text: markdown);
                   });
                 else
-                  EsysFlutterShare.shareText(widget.saint.name, markdown);
+                  Share.text(widget.saint.name, markdown, 'text/plain');
               }
               break;
             default:
@@ -140,7 +141,8 @@ class _SaintDetailPageState extends State<SaintDetailPage> {
                       title: null,
                       background: Container(
                         decoration: AppTheme.bg_decor_3() ??
-                            BoxDecoration(color: Theme.of(context).primaryColor),
+                            BoxDecoration(
+                                color: Theme.of(context).primaryColor),
                         padding: EdgeInsets.fromLTRB(
                             10.0, kToolbarHeight, 10.0, 0.0),
                         child: Column(

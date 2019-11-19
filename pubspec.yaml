@@ -1,16 +1,9 @@
 name: saints_flutter_1_0
-description: A new Flutter application.
-
-# The following defines the version and build number for your application.
-# A version number is three numbers separated by dots, like 1.2.43
-# followed by an optional build number separated by a +.
-# Both the version and the builder number may be overridden in flutter
-# build by specifying --build-name and --build-number, respectively.
-# Read more about versioning at semver.org.
-version: 1.0.0+1
+description: Lives of saints
+version: 4.6+12
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.1.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -26,14 +19,13 @@ dependencies:
   rxdart: ^0.18.1
   shared_preferences: any
   sqflite: any
-  path_provider: "^0.4.1"
+  path_provider:  ^1.4.2
   html2md:
   image: "^2.0.4"
   async: "^2.0.7"
   launch_review: "^1.0.1"
   flutter_launcher_icons:
-  esys_flutter_share:
-    git: https://github.com/alexeyismirnov/esys-flutter-share
+  esys_flutter_share: ^1.0.2
 
 dev_dependencies:
   flutter_test:
