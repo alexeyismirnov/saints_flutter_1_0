@@ -179,7 +179,7 @@ class _SaintDetailPageState extends State<SaintDetailPage> {
                       constraints: BoxConstraints(minHeight: _textMinHeight),
                       decoration: AppTheme.bg_decor_2() ??
                           BoxDecoration(color: Theme.of(context).canvasColor),
-                      child: mkText),
+                      child: SafeArea(top: false, child: mkText)),
                   childCount: 1))
         ]);
   }
