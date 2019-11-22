@@ -3,7 +3,6 @@ class NameOfDay {
   const NameOfDay._internal(this._value);
 
   int toInt() => _value as int;
-  
 }
 
 const pascha = const NameOfDay._internal(100000);
@@ -18,13 +17,14 @@ const theotokosWall = const NameOfDay._internal(100105);
 const theotokosSevenArrows = const NameOfDay._internal(100106);
 const firstCouncil = const NameOfDay._internal(100107);
 const theotokosTabynsk = const NameOfDay._internal(100108);
+const newMartyrsOfRussia = const NameOfDay._internal(100109);
 
 class Days {
   Days(this.days);
   int days;
 
-  DateTime operator+(DateTime d) => d.add(Duration(days: days));
-  DateTime operator-(DateTime d) => d.subtract(Duration(days: days));
+  DateTime operator +(DateTime d) => d.add(Duration(days: days));
+  DateTime operator -(DateTime d) => d.subtract(Duration(days: days));
 }
 
 class ChurchCalendar {
@@ -43,6 +43,9 @@ class ChurchCalendar {
         .add(Duration(days: 13));
   }
 
+  static DateTime nearestSundayBefore(DateTime d) => Days(d.weekday) - d;
+  static DateTime nearestSundayAfter(DateTime d) => Days(7 - d.weekday) + d;
+
   static set date(DateTime date) {
     currentDate = date;
 
@@ -50,24 +53,34 @@ class ChurchCalendar {
       currentYear = date.year;
 
       final P = paschaDay(currentYear);
+      var newMartyrs = DateTime(currentYear, 2, 7);
+
+      switch (newMartyrs.weekday) {
+        case DateTime.sunday:
+          break;
+
+        case DateTime.monday:
+        case DateTime.tuesday:
+        case DateTime.wednesday:
+          newMartyrs = nearestSundayBefore(newMartyrs);
+          break;
+
+        default:
+          newMartyrs = nearestSundayAfter(newMartyrs);
+      }
 
       feasts = {
-        Days(7)-P: [palmSunday],
+        Days(7) - P: [palmSunday],
         P: [pascha],
-        Days(39)+P: [ascension],
-        Days(49)+P: [pentecost],
-
-        Days(5)+P: [theotokosLiveGiving],
-        Days(24)+P: [theotokosDubenskaya],
-        Days(42)+P: [theotokosChelnskaya,firstCouncil],
-        Days(56)+P: [theotokosWall, theotokosSevenArrows],
-        Days(61)+P: [theotokosTabynsk],
-
+        Days(39) + P: [ascension],
+        Days(49) + P: [pentecost],
+        Days(5) + P: [theotokosLiveGiving],
+        Days(24) + P: [theotokosDubenskaya],
+        Days(42) + P: [theotokosChelnskaya, firstCouncil],
+        Days(56) + P: [theotokosWall, theotokosSevenArrows],
+        Days(61) + P: [theotokosTabynsk],
+        newMartyrs: [newMartyrsOfRussia]
       };
-
     }
-
   }
-
-
 }
