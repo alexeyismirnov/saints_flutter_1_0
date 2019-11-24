@@ -26,7 +26,10 @@ class _SaintDetailPageState extends State<SaintDetailPage> {
   void initState() {
     super.initState();
 
-    markdown = html2md.convert(widget.saint.zhitie).replaceAll('\\', '');
+    markdown = html2md
+        .convert(widget.saint.zhitie)
+        .replaceAll('\\', '')
+        .replaceAll('\u00AD', '');
 
     _scrollController = ScrollController()..addListener(() => setState(() {}));
   }
