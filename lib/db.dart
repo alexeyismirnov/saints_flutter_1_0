@@ -13,15 +13,6 @@ import 'interval.dart' as Range;
 import 'church_calendar.dart';
 import 'globals.dart' as G;
 
-void copyDatabase({@required String to}) async {
-  await deleteDatabase(to);
-
-  ByteData data = await rootBundle.load('assets/saints.sqlite');
-  List<int> bytes =
-      data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
-  await new File(to).writeAsBytes(bytes);
-}
-
 class TheViewModel extends InheritedWidget {
   final SaintsModel theModel;
 
