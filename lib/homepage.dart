@@ -9,10 +9,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static int initialPage = 100000;
-  static DateTime initialDate = DateTime.now();
+  DateTime initialDate;
+  int initialPage;
+  PageController _controller;
 
-  PageController _controller = PageController(initialPage: initialPage);
+  @override
+  void initState() {
+    super.initState();
+
+    initialPage = 100000;
+    _controller = PageController(initialPage: initialPage);
+
+    DateTime now =  DateTime.now();
+    initialDate  =  DateTime(now.year, now.month, now.day);
+  }
 
   Widget _buildPage(BuildContext context, int index) {
     GlobalKey<SaintListState> saintListKey = GlobalKey<SaintListState>();
