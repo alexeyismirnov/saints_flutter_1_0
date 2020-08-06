@@ -10,6 +10,7 @@ const palmSunday = const NameOfDay._internal(100001);
 const ascension = const NameOfDay._internal(100002);
 const pentecost = const NameOfDay._internal(100003);
 
+const theotokosIveron = const NameOfDay._internal(2250);
 const theotokosLiveGiving = const NameOfDay._internal(100100);
 const theotokosDubenskaya = const NameOfDay._internal(100101);
 const theotokosChelnskaya = const NameOfDay._internal(100103);
@@ -72,6 +73,7 @@ class ChurchCalendar {
       feasts = {
         Days(7) - P: [palmSunday],
         P: [pascha],
+        Days(2) + P: [theotokosIveron],
         Days(39) + P: [ascension],
         Days(49) + P: [pentecost],
         Days(5) + P: [theotokosLiveGiving],
