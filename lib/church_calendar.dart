@@ -1,3 +1,5 @@
+import 'package:supercharged/supercharged.dart';
+
 class NameOfDay {
   final _value;
   const NameOfDay._internal(this._value);
@@ -19,14 +21,8 @@ const theotokosSevenArrows = const NameOfDay._internal(100106);
 const firstCouncil = const NameOfDay._internal(100107);
 const theotokosTabynsk = const NameOfDay._internal(100108);
 const newMartyrsOfRussia = const NameOfDay._internal(100109);
-
-class Days {
-  Days(this.days);
-  int days;
-
-  DateTime operator +(DateTime d) => d.add(Duration(days: days));
-  DateTime operator -(DateTime d) => d.subtract(Duration(days: days));
-}
+const holyFathersSixCouncils = const NameOfDay._internal(100110);
+const allRussianSaints = const NameOfDay._internal(100111);
 
 class ChurchCalendar {
   static DateTime currentDate;
@@ -40,12 +36,27 @@ class ChurchCalendar {
 
     return ((a + b > 10)
             ? DateTime(year, 4, a + b - 9)
-            : DateTime(year, 3, 22 + a + b))
-        .add(Duration(days: 13));
+            : DateTime(year, 3, 22 + a + b)) +
+        13.days;
   }
 
-  static DateTime nearestSundayBefore(DateTime d) => Days(d.weekday) - d;
-  static DateTime nearestSundayAfter(DateTime d) => Days(7 - d.weekday) + d;
+  static DateTime nearestSundayBefore(DateTime d) => d - d.weekday.days;
+  static DateTime nearestSundayAfter(DateTime d) => d + (7 - d.weekday).days;
+
+  static DateTime nearestSunday(DateTime d) {
+    switch (d.weekday) {
+      case DateTime.sunday:
+        return d;
+
+      case DateTime.monday:
+      case DateTime.tuesday:
+      case DateTime.wednesday:
+        return nearestSundayBefore(d);
+
+      default:
+        return nearestSundayAfter(d);
+    }
+  }
 
   static set date(DateTime date) {
     currentDate = date;
@@ -54,34 +65,21 @@ class ChurchCalendar {
       currentYear = date.year;
 
       final P = paschaDay(currentYear);
-      var newMartyrs = DateTime(currentYear, 2, 7);
-
-      switch (newMartyrs.weekday) {
-        case DateTime.sunday:
-          break;
-
-        case DateTime.monday:
-        case DateTime.tuesday:
-        case DateTime.wednesday:
-          newMartyrs = nearestSundayBefore(newMartyrs);
-          break;
-
-        default:
-          newMartyrs = nearestSundayAfter(newMartyrs);
-      }
 
       feasts = {
-        Days(7) - P: [palmSunday],
+        P - 7.days: [palmSunday],
         P: [pascha],
-        Days(2) + P: [theotokosIveron],
-        Days(39) + P: [ascension],
-        Days(49) + P: [pentecost],
-        Days(5) + P: [theotokosLiveGiving],
-        Days(24) + P: [theotokosDubenskaya],
-        Days(42) + P: [theotokosChelnskaya, firstCouncil],
-        Days(56) + P: [theotokosWall, theotokosSevenArrows],
-        Days(61) + P: [theotokosTabynsk],
-        newMartyrs: [newMartyrsOfRussia]
+        P + 2.days: [theotokosIveron],
+        P + 39.days: [ascension],
+        P + 49.days: [pentecost],
+        P + 5.days: [theotokosLiveGiving],
+        P + 24.days: [theotokosDubenskaya],
+        P + 42.days: [theotokosChelnskaya, firstCouncil],
+        P + 56.days: [theotokosWall, theotokosSevenArrows],
+        P + 61.days: [theotokosTabynsk],
+        P + 63.days: [allRussianSaints],
+        nearestSunday(DateTime(currentYear, 2, 7)): [newMartyrsOfRussia],
+        nearestSunday(DateTime(currentYear, 7, 29)): [holyFathersSixCouncils]
       };
     }
   }

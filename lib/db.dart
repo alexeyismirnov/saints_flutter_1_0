@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:flutter/services.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:async/async.dart';
+import 'package:supercharged/supercharged.dart';
 
-import 'dart:typed_data';
-import 'dart:io';
 import 'dart:async';
 
 import 'interval.dart' as Range;
@@ -127,7 +124,7 @@ class SaintsModel {
       final leap = Range.Interval<DateTime>.closedOpen(leapStart, leapEnd);
 
       if (leap.contains(date))
-        sources.addAll(_addSaints(date.add(Duration(days: 1))));
+        sources.addAll(_addSaints(date + 1.days));
       else if (date == leapEnd)
         sources.addAll(_addSaints(leapStart));
       else

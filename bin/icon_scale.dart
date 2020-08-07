@@ -15,7 +15,7 @@ void main(List<String> args) async {
       print(filename);
 
       Image image = decodeImage(file.readAsBytesSync());
-      Image thumbnail = copyResize(image, -1, 150);
+      Image thumbnail = copyResize(image, height:150);
 
       new File('icons-150px/$filename').writeAsBytesSync(encodeJpg(thumbnail, quality:85));
 
